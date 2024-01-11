@@ -1,5 +1,5 @@
 import { experimental_extendTheme as extendTheme } from "@mui/material/styles";
-import { cyan, deepOrange, orange, teal } from "@mui/material/colors";
+import { cyan, deepOrange, orange, red, teal } from "@mui/material/colors";
 
 // Create a theme instance.
 const theme = extendTheme({
@@ -66,6 +66,27 @@ const theme = extendTheme({
             borderWidth: "1px !important",
           },
         }),
+      },
+    },
+
+    MuiCssBaseline: {
+      styleOverrides: {
+        body: {
+          "*::-webkit-scrollbar": {
+            width: "8px",
+            height: "8px",
+          },
+
+          "*::-webkit-scrollbar-thumb": {
+            backgroundColor: "#bdc3c7",
+            borderRadius: "9999px",
+          },
+
+          "*::-webkit-scrollbar-thumb:hover": {
+            backgroundColor: "#7f8c8d",
+            borderRadius: "9999px",
+          },
+        },
       },
     },
   },

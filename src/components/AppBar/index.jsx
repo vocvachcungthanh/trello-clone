@@ -28,6 +28,8 @@ function AppBar() {
         display: "flex",
         alignItems: "center",
         justifyContent: "space-between",
+        gap: 2,
+        overflowX: "auto",
       }}
     >
       <Box
@@ -64,11 +66,21 @@ function AppBar() {
           </Typography>
         </Box>
 
-        <Workspaces />
-        <Recents />
-        <Starred />
-        <Templates />
-        <Button variant="outlined">Create</Button>
+        <Box
+          sx={{
+            display: {
+              xs: "none",
+              md: "flex",
+            },
+            gap: 1,
+          }}
+        >
+          <Workspaces />
+          <Recents />
+          <Starred />
+          <Templates />
+          <Button variant="outlined">Create</Button>
+        </Box>
       </Box>
 
       <Box
@@ -83,6 +95,9 @@ function AppBar() {
           label="Search field ..."
           type="search"
           size="small"
+          sx={{
+            minWidth: 120,
+          }}
         />
 
         <ModeSelect />
