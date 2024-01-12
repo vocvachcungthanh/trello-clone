@@ -1,3 +1,5 @@
+import React from "react";
+
 import Box from "@mui/material/Box";
 import AppsIcon from "@mui/icons-material/Apps";
 import SvgIcon from "@mui/material/SvgIcon";
@@ -17,9 +19,25 @@ import Tooltip from "@mui/material/Tooltip";
 import NotificationsNoneIcon from "@mui/icons-material/NotificationsNone";
 import LibraryAddIcon from "@mui/icons-material/LibraryAdd";
 import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
+import SearchIcon from "@mui/icons-material/Search";
+import InputAdornment from "@mui/material/InputAdornment";
 import Profiles from "./Menus/Profiles";
+import CloseIcon from "@mui/icons-material/Close";
 
 function AppBar() {
+  const [searchValue, setSearchValue] = React.useState("");
+
+  const renderClose = React.useMemo(() => {
+    if (searchValue.length > 0) {
+      return (
+        <CloseIcon
+          sx={{ color: "white", fontSize: "small", cursor: "pointer" }}
+          onClick={() => setSearchValue("")}
+        />
+      );
+    }
+  }, [searchValue]);
+
   return (
     <Box
       sx={{
@@ -31,6 +49,8 @@ function AppBar() {
         gap: 2,
         overflowX: "auto",
         px: 2,
+        bgcolor: (theme) =>
+          theme.palette.mode === "dark" ? "#2c3e50" : "#1565c0",
       }}
     >
       <Box
@@ -40,7 +60,7 @@ function AppBar() {
           gap: 2,
         }}
       >
-        <AppsIcon sx={{ color: "primary.main" }} />
+        <AppsIcon sx={{ color: "white" }} />
 
         <Box
           sx={{
@@ -53,12 +73,12 @@ function AppBar() {
             component={TrelloIcon}
             viewBox="0 0 24 24"
             fontSize="small"
-            sx={{ color: "primary.main" }}
+            sx={{ color: "white" }}
           />
           <Typography
             variant="span"
             sx={{
-              color: "primary.main",
+              color: "white",
               fontSize: "1.2rem",
               fontWeight: "bold",
             }}
@@ -80,7 +100,12 @@ function AppBar() {
           <Recents />
           <Starred />
           <Templates />
-          <Button variant="outlined" startIcon={<LibraryAddIcon />}>
+          <Button
+            sx={{
+              color: "white",
+            }}
+            startIcon={<LibraryAddIcon />}
+          >
             Create
           </Button>
         </Box>
@@ -96,10 +121,42 @@ function AppBar() {
         <TextField
           id="outlined-search"
           label="Search field ..."
-          type="search"
+          type="text"
           size="small"
+          value={searchValue}
+          onChange={(e) => setSearchValue(e.target.value)}
+          InputProps={{
+            startAdornment: (
+              <InputAdornment position="start">
+                <SearchIcon sx={{ color: "white" }} />
+              </InputAdornment>
+            ),
+            endAdornment: renderClose,
+          }}
           sx={{
             minWidth: 120,
+            maxWidth: 180,
+            "& label": {
+              color: "white",
+            },
+            "& input": {
+              color: "white",
+            },
+
+            "& label.Mui-focused": {
+              color: "white",
+            },
+            "& .MuiOutlinedInput-root": {
+              "& fieldset": {
+                borderColor: "white",
+              },
+              "&:hover fieldset": {
+                borderColor: "white",
+              },
+              "&.Mui-focused fieldset": {
+                borderColor: "white",
+              },
+            },
           }}
         />
 
@@ -107,20 +164,20 @@ function AppBar() {
 
         <Tooltip title="Notifications">
           <Badge
-            color="secondary"
+            color="warning"
             variant="dot"
             sx={{
               cursor: "pointer",
             }}
           >
-            <NotificationsNoneIcon sx={{ color: "primary.main" }} />
+            <NotificationsNoneIcon sx={{ color: "white" }} />
           </Badge>
         </Tooltip>
         <Tooltip title="Help">
           <HelpOutlineIcon
             sx={{
               cursor: "pointer",
-              color: "primary.main",
+              color: "white",
             }}
           />
         </Tooltip>
