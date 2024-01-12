@@ -1,5 +1,5 @@
 import { experimental_extendTheme as extendTheme } from "@mui/material/styles";
-import { cyan, deepOrange, orange, lightBlue } from "@mui/material/colors";
+// import { cyan, deepOrange, orange, lightBlue } from "@mui/material/colors";
 
 // Create a theme instance.
 const theme = extendTheme({
@@ -8,21 +8,21 @@ const theme = extendTheme({
     boardBarHeight: "60px",
   },
 
-  colorSchemes: {
-    light: {
-      palette: {
-        primary: lightBlue,
-        secondary: deepOrange,
-      },
-    },
+  // colorSchemes: {
+  //   light: {
+  //     palette: {
+  //       primary: lightBlue,
+  //       secondary: deepOrange,
+  //     },
+  //   },
 
-    dark: {
-      palette: {
-        primary: cyan,
-        secondary: orange,
-      },
-    },
-  },
+  //   dark: {
+  //     palette: {
+  //       primary: cyan,
+  //       secondary: orange,
+  //     },
+  //   },
+  // },
 
   components: {
     // Name of the component
@@ -32,38 +32,28 @@ const theme = extendTheme({
         root: {
           // Some CSS
           textTransform: "none",
+          borderWidth: "0.5px",
         },
       },
     },
 
     MuiInputLabel: {
       styleOverrides: {
-        // Name of the slot
-        root: ({ theme }) => ({
-          color: theme.palette.primary.main,
+        root: {
           fontSize: "0.875rem",
-        }),
+        },
       },
     },
 
     MuiOutlinedInput: {
       styleOverrides: {
-        // Name of the slot
-        root: ({ theme }) => ({
-          color: theme.palette.primary.main,
+        root: {
           fontsize: "0.875rem",
-          ".MuiOutlinedInput-notchedOutline": {
-            borderColor: theme.palette.primary.light,
-          },
-          "&:hover": {
-            ".MuiOutlinedInput-notchedOutline": {
-              borderColor: theme.palette.primary.main,
-            },
-          },
+
           "& fieldset": {
-            borderWidth: "1px !important",
+            borderWidth: "0.5px !important",
           },
-        }),
+        },
       },
     },
 
@@ -76,13 +66,12 @@ const theme = extendTheme({
           },
 
           "*::-webkit-scrollbar-thumb": {
-            backgroundColor: "#bdc3c7",
+            backgroundColor: "#dcdde1",
             borderRadius: "9999px",
           },
 
           "*::-webkit-scrollbar-thumb:hover": {
-            backgroundColor: "#7f8c8d",
-            borderRadius: "9999px",
+            backgroundColor: "white",
           },
         },
       },

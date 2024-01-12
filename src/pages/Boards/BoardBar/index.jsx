@@ -13,13 +13,13 @@ import FilterListIcon from "@mui/icons-material/FilterList";
 import { Tooltip } from "@mui/material";
 
 const MENU_STYLES = {
-  color: "primary.main",
-  bgcolor: "white",
+  color: "white",
+  bgcolor: "transparent",
   px: "5px",
   border: "none",
   borderRadius: "5px",
-  "& .MuiSvgIcon-root": {
-    color: "primary.main",
+  ".MuiSvgIcon-root": {
+    color: "white",
   },
 
   "&:hover": {
@@ -37,9 +37,11 @@ function BoardBar() {
         alignItems: "center",
         justifyContent: "space-between",
         gap: 2,
-        overflowX: "auto",
-        borderTop: "1px solid #00bfa5",
         px: 2,
+        overflowX: "auto",
+        bgcolor: (theme) =>
+          theme.palette.mode === "dark" ? "#31495e" : "#1976d2",
+        borderBottom: "1px solid #fff",
       }}
     >
       <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
@@ -79,7 +81,17 @@ function BoardBar() {
         />
       </Box>
       <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-        <Button variant="outlined" startIcon={<PersonAddIcon />}>
+        <Button
+          variant="outlined"
+          startIcon={<PersonAddIcon />}
+          sx={{
+            color: "white",
+            borderColor: "white",
+            "&:hover": {
+              borderColor: "white",
+            },
+          }}
+        >
           Invite
         </Button>
         <AvatarGroup
