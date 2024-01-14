@@ -10,6 +10,10 @@ import Button from "@mui/material/Button";
 import Menu from "@mui/material/Menu";
 import Box from "@mui/material/Box";
 
+// thư viên kéo thả
+import { useSortable } from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
+
 // Icons
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import ContentPasteIcon from "@mui/icons-material/ContentPaste";
@@ -51,6 +55,15 @@ const COLUMN_FOOTER_STYLES = {
 };
 
 function Column({ column }) {
+  const { attributes, listeners, setNodeRef, transform, transition } =
+    useSortable({ id: column?._id, data: { ...column } });
+
+  const dndKitColumnStyles = {
+    touchActive: "none",
+    transform: CSS.Translate.toString(transform),
+    transition,
+  };
+
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
 
@@ -61,7 +74,13 @@ function Column({ column }) {
   const orderedCards = mapOrder(column?.cards, column?.cardOrderIds, "_id");
 
   return (
-    <Box sx={COLUMN_STYLES}>
+    <Box
+      ref={setNodeRef}
+      style={dndKitColumnStyles}
+      {...attributes}
+      {...listeners}
+      sx={COLUMN_STYLES}
+    >
       {/* Box Column header */}
       <Box sx={COLUMN_HEADER_STYLES}>
         <Typography
