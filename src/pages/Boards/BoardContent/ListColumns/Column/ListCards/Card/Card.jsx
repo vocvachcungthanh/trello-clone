@@ -37,6 +37,8 @@ function Card({ card }) {
     transition,
     height: "100%",
     opacity: isDragging ? 0.5 : undefined,
+    border: isDragging ? "1px solid #2ecc71" : undefined,
+    borderRadius: "4px",
   };
 
   const renderCardMedia = useMemo(() => {
