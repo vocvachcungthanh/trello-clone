@@ -1,5 +1,6 @@
 import Box from "@mui/material/Box";
 import { ListColums } from "./ListColumns";
+import { mapOrder } from "~/utils/sorts.js";
 
 const BOARD_CONTENT_STYLES = {
   backgroundColor: (theme) =>
@@ -9,10 +10,12 @@ const BOARD_CONTENT_STYLES = {
   p: "10px 0",
 };
 
-function BoardContent() {
+function BoardContent({ board }) {
+  const orderedColums = mapOrder(board.columns, board.columnOrderIds, "_id");
+
   return (
     <Box sx={BOARD_CONTENT_STYLES}>
-      <ListColums />
+      <ListColums columns={orderedColums} />
     </Box>
   );
 }

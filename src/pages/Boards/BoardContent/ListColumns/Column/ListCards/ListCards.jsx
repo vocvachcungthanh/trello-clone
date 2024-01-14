@@ -1,5 +1,6 @@
 import Box from "@mui/material/Box";
 import { Card } from "./Card";
+import { useMemo } from "react";
 
 const LIST_CARDS_STYLES = {
   p: "0 5px",
@@ -25,12 +26,13 @@ const LIST_CARDS_STYLES = {
   },
 };
 
-function ListCards() {
-  return (
-    <Box sx={LIST_CARDS_STYLES}>
-      <Card />
-    </Box>
+function ListCards({ cards }) {
+  const renderCard = useMemo(
+    () => cards?.map((item) => <Card key={item._id} card={item} />),
+    [cards]
   );
+
+  return <Box sx={LIST_CARDS_STYLES}>{renderCard}</Box>;
 }
 
 export default ListCards;

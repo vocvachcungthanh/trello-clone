@@ -21,6 +21,8 @@ import AddCardIcon from "@mui/icons-material/AddCard";
 import CloudIcon from "@mui/icons-material/Cloud";
 import { ListCards } from "./ListCards";
 
+import { mapOrder } from "~/utils/sorts.js";
+
 const COLUMN_STYLES = {
   minWidth: 300,
   maxWidth: 300,
@@ -48,13 +50,15 @@ const COLUMN_FOOTER_STYLES = {
   justifyContent: "space-between",
 };
 
-function Column() {
+function Column({ column }) {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
 
   const handleClick = (event) => setAnchorEl(event.currentTarget);
 
   const handleClose = () => setAnchorEl(null);
+
+  const orderedCards = mapOrder(column?.cards, column?.cardOrderIds, "_id");
 
   return (
     <Box sx={COLUMN_STYLES}>
@@ -64,7 +68,7 @@ function Column() {
           variant="h6"
           sx={{ fontWeight: "bold", cursor: "pointer", fontSize: "1rem" }}
         >
-          Column Title
+          {column?.title}
         </Typography>
         <Box sx={{ display: "flex" }}>
           <Tooltip title="More options">
@@ -128,7 +132,7 @@ function Column() {
       </Box>
 
       {/* Box list cards */}
-      <ListCards />
+      <ListCards cards={orderedCards} />
 
       {/* Box column footer */}
       <Box sx={COLUMN_FOOTER_STYLES}>

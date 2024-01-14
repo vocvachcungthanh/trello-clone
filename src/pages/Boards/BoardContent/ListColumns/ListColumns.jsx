@@ -4,6 +4,7 @@ import Box from "@mui/material/Box";
 import NoteAddIcon from "@mui/icons-material/NoteAdd";
 
 import { Column } from "./Column";
+import { useMemo } from "react";
 
 const LIST_COLUMNS_STYLES = {
   bgcolor: "inherit",
@@ -19,10 +20,14 @@ const LIST_COLUMNS_STYLES = {
   },
 };
 
-function ListColumns() {
+function ListColumns({ columns }) {
+  const renderColumn = useMemo(() => {
+    return columns?.map((item) => <Column key={item._id} column={item} />);
+  }, [columns]);
+
   return (
     <Box sx={LIST_COLUMNS_STYLES}>
-      <Column />
+      {renderColumn}
       <Box
         sx={{
           minWidth: "200px",
