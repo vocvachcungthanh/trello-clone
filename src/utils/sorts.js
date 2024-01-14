@@ -1,1 +1,8 @@
-// Sort Colums/Cards
+// Sắp xếp mảng mảng dựa vào một mảng ban đầu
+export const mapOrder = (originalArray, orderArray, key) => {
+  if (!originalArray || !orderArray || !key) return [];
+
+  return [...originalArray].sort(
+    (a, b) => orderArray.indexOf(a[key]) - orderArray.indexOf(b[key])
+  );
+};

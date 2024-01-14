@@ -12,6 +12,8 @@ import BoltIcon from "@mui/icons-material/Bolt";
 import FilterListIcon from "@mui/icons-material/FilterList";
 import { Tooltip } from "@mui/material";
 
+import { capitalizeFirstLetter } from "~/utils/formatters.js";
+
 const MENU_STYLES = {
   color: "white",
   bgcolor: "transparent",
@@ -27,7 +29,7 @@ const MENU_STYLES = {
   },
 };
 
-function BoardBar() {
+function BoardBar({ board }) {
   return (
     <Box
       sx={{
@@ -52,14 +54,14 @@ function BoardBar() {
         <Chip
           sx={MENU_STYLES}
           icon={<DashboardIcon />}
-          label="vocvachungthanh MERN Stack board"
+          label={board?.title}
           clickable
         />
 
         <Chip
           sx={MENU_STYLES}
           icon={<VpnLockIcon />}
-          label="Public/Private Workspace"
+          label={capitalizeFirstLetter(board?.type)}
           clickable
         />
 

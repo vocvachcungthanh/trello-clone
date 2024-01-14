@@ -9,6 +9,7 @@ import { Card as MuiCard } from "@mui/material";
 import CommentIcon from "@mui/icons-material/Comment";
 import AttachmentIcon from "@mui/icons-material/Attachment";
 import GroupIcon from "@mui/icons-material/Group";
+import { useMemo } from "react";
 
 const CARD_STYLES = {
   cursor: "pointer",
@@ -16,28 +17,56 @@ const CARD_STYLES = {
   overflow: "unset",
 };
 
-function Card() {
+function Card({ card }) {
+  const renderCardMedia = useMemo(() => {
+    if (card.cover) {
+      return (
+        <CardMedia
+          sx={{ height: 140 }}
+          image={card.cover}
+          title="green iguana"
+        />
+      );
+    }
+  }, [card.cover]);
+
+  const renderActions = useMemo(() => {
+    if (
+      !!card?.memberIds?.length ||
+      !!card?.comments?.length ||
+      !!card?.attachments?.length
+    ) {
+      return (
+        <CardActions sx={{ p: "0 4px 8px 4px" }}>
+          {!!card?.memberIds?.length && (
+            <Button size="small" startIcon={<GroupIcon />}>
+              {card?.memberIds?.length}
+            </Button>
+          )}
+
+          {!!card?.comments?.length && (
+            <Button size="small" startIcon={<CommentIcon />}>
+              {card?.comments?.length}
+            </Button>
+          )}
+
+          {!!card?.attachments?.length && (
+            <Button size="small" startIcon={<AttachmentIcon />}>
+              {card?.attachments?.length}
+            </Button>
+          )}
+        </CardActions>
+      );
+    }
+  }, [card]);
+
   return (
     <MuiCard sx={CARD_STYLES}>
-      <CardMedia
-        sx={{ height: 140 }}
-        image="https://media.istockphoto.com/id/860715748/vi/anh/ch%C3%A2n-dung-g%C3%A0-t%C3%A2y-hoang-d%C3%A3-%C3%B3ng-%C3%A1nh.jpg?s=2048x2048&w=is&k=20&c=qbBRXkHBMh3B_-KUJDeMhWA76LULjXO3RxXuT16zFhg="
-        title="green iguana"
-      />
+      {renderCardMedia}
       <CardContent sx={{ p: 1.5, "&:last-child": { pb: 1.5 } }}>
-        <Typography>vocvachcungthanh</Typography>
+        <Typography>{card.title}</Typography>
       </CardContent>
-      <CardActions sx={{ p: "0 4px 8px 4px" }}>
-        <Button size="small" startIcon={<GroupIcon />}>
-          20
-        </Button>
-        <Button size="small" startIcon={<CommentIcon />}>
-          15
-        </Button>
-        <Button size="small" startIcon={<AttachmentIcon />}>
-          10
-        </Button>
-      </CardActions>
+      {renderActions}
     </MuiCard>
   );
 }
