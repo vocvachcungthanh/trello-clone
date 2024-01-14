@@ -10,6 +10,7 @@ import {
   useSensor,
   useSensors,
   DragOverlay,
+  defaultDropAnimationSideEffects,
 } from "@dnd-kit/core";
 import { arrayMove } from "@dnd-kit/sortable";
 
@@ -97,6 +98,15 @@ function BoardContent({ board }) {
     setActiveDragItemId(null);
   };
 
+  const dropAnimation = {
+    sideEffects: defaultDropAnimationSideEffects({
+      styles: {
+        active: {
+          opacity: 0.5,
+        },
+      },
+    }),
+  };
   return (
     <DndContext
       onDragEnd={handleDragEnd}
@@ -105,7 +115,7 @@ function BoardContent({ board }) {
     >
       <Box sx={BOARD_CONTENT_STYLES}>
         <ListColums columns={orderedColumns} />
-        <DragOverlay>
+        <DragOverlay dropAnimation={dropAnimation}>
           {!activeDragItemType && null}
           {activeDragItemType === ACTIVE_DRAG_ITEM_TYPE.COLUMN && (
             <Column column={activeDragItemData} />

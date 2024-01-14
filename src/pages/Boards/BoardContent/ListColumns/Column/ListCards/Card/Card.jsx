@@ -6,7 +6,6 @@ import Button from "@mui/material/Button";
 import { Card as MuiCard } from "@mui/material";
 
 // thư viên kéo thả
-import { defaultDropAnimationSideEffects } from "@dnd-kit/core";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 
@@ -82,24 +81,11 @@ function Card({ card }) {
     }
   }, [card]);
 
-  const dropAnimation = {
-    sideEffects: defaultDropAnimationSideEffects({
-      styles: {
-        active: {
-          opacity: 0.5,
-        },
-      },
-    }),
-  };
-
   return (
     <div ref={setNodeRef} style={dndKitCardStyles} {...attributes}>
       <MuiCard {...listeners} sx={CARD_STYLES}>
         {renderCardMedia}
-        <CardContent
-          sx={{ p: 1.5, "&:last-child": { pb: 1.5 } }}
-          dropAnimation={dropAnimation}
-        >
+        <CardContent sx={{ p: 1.5, "&:last-child": { pb: 1.5 } }}>
           <Typography>{card.title}</Typography>
         </CardContent>
         {renderActions}
