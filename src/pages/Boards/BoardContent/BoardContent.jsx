@@ -9,10 +9,13 @@ import {
   TouchSensor,
   useSensor,
   useSensors,
+  DragOverlay,
 } from "@dnd-kit/core";
 import { arrayMove } from "@dnd-kit/sortable";
 
 import { ListColums } from "./ListColumns";
+import { Column } from "./ListColumns/Column";
+import { Card } from "./ListColumns/Column/ListCards/Card";
 import { mapOrder } from "~/utils/sorts.js";
 
 const BOARD_CONTENT_STYLES = {
@@ -21,6 +24,11 @@ const BOARD_CONTENT_STYLES = {
   width: "100%",
   height: (theme) => theme.trello.boardContentHeight,
   p: "10px 0",
+};
+
+const ACTIVE_DRAG_ITEM_TYPE = {
+  COLUMN: "ACTIVE_DRAG_ITEM_TYPE_COLUMN",
+  CARD: "ACTIVE_DRAG_ITEM_TYPE_CARD",
 };
 
 function BoardContent({ board }) {
@@ -42,10 +50,24 @@ function BoardContent({ board }) {
   const sensors = useSensors(mouseSensor, touchSensor);
 
   const [orderedColumns, setOrderedColumns] = React.useState([]);
+  const [activeDragItemId, setActiveDragItemId] = React.useState(null);
+  const [activeDragItemType, setActiveDrageItemType] = React.useState(null);
+  const [activeDragItemData, setActiveDragItemData] = React.useState(null);
 
   React.useEffect(() => {
     setOrderedColumns(mapOrder(board.columns, board.columnOrderIds, "_id"));
   }, [board]);
+
+  const handleDragStart = (event) => {
+    setActiveDragItemId(event?.active?.id);
+    setActiveDrageItemType(
+      event?.active?.data?.current?.columnId
+        ? ACTIVE_DRAG_ITEM_TYPE.CARD
+        : ACTIVE_DRAG_ITEM_TYPE.COLUMN
+    );
+
+    setActiveDragItemData(event?.active?.data?.current);
+  };
 
   const handleDragEnd = (event) => {
     const { active, over } = event;
@@ -69,12 +91,29 @@ function BoardContent({ board }) {
       // set lại khi kéo thả
       return setOrderedColumns(dndOrderedColumns);
     }
+
+    setActiveDragItemData(null);
+    setActiveDrageItemType(null);
+    setActiveDragItemId(null);
   };
 
   return (
-    <DndContext onDragEnd={handleDragEnd} sensors={sensors}>
+    <DndContext
+      onDragEnd={handleDragEnd}
+      onDragStart={handleDragStart}
+      sensors={sensors}
+    >
       <Box sx={BOARD_CONTENT_STYLES}>
         <ListColums columns={orderedColumns} />
+        <DragOverlay>
+          {!activeDragItemType && null}
+          {activeDragItemType === ACTIVE_DRAG_ITEM_TYPE.COLUMN && (
+            <Column column={activeDragItemData} />
+          )}
+          {activeDragItemType === ACTIVE_DRAG_ITEM_TYPE.CARD && (
+            <Card card={activeDragItemData} />
+          )}
+        </DragOverlay>
       </Box>
     </DndContext>
   );
