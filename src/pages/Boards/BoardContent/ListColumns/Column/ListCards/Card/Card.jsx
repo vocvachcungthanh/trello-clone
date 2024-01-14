@@ -5,6 +5,11 @@ import CardMedia from "@mui/material/CardMedia";
 import Button from "@mui/material/Button";
 import { Card as MuiCard } from "@mui/material";
 
+// thư viên kéo thả
+import { defaultDropAnimationSideEffects } from "@dnd-kit/core";
+import { useSortable } from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
+
 // Icons
 import CommentIcon from "@mui/icons-material/Comment";
 import AttachmentIcon from "@mui/icons-material/Attachment";
@@ -18,6 +23,23 @@ const CARD_STYLES = {
 };
 
 function Card({ card }) {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: card?._id, data: { ...card } });
+
+  const dndKitCardStyles = {
+    touchActive: "none",
+    transform: CSS.Translate.toString(transform),
+    transition,
+    height: "100%",
+    opacity: isDragging ? 0.5 : undefined,
+  };
+
   const renderCardMedia = useMemo(() => {
     if (card.cover) {
       return (
@@ -60,14 +82,29 @@ function Card({ card }) {
     }
   }, [card]);
 
+  const dropAnimation = {
+    sideEffects: defaultDropAnimationSideEffects({
+      styles: {
+        active: {
+          opacity: 0.5,
+        },
+      },
+    }),
+  };
+
   return (
-    <MuiCard sx={CARD_STYLES}>
-      {renderCardMedia}
-      <CardContent sx={{ p: 1.5, "&:last-child": { pb: 1.5 } }}>
-        <Typography>{card.title}</Typography>
-      </CardContent>
-      {renderActions}
-    </MuiCard>
+    <div ref={setNodeRef} style={dndKitCardStyles} {...attributes}>
+      <MuiCard {...listeners} sx={CARD_STYLES}>
+        {renderCardMedia}
+        <CardContent
+          sx={{ p: 1.5, "&:last-child": { pb: 1.5 } }}
+          dropAnimation={dropAnimation}
+        >
+          <Typography>{card.title}</Typography>
+        </CardContent>
+        {renderActions}
+      </MuiCard>
+    </div>
   );
 }
 
