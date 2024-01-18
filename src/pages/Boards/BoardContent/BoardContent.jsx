@@ -1,3 +1,4 @@
+/* eslint-disable indent */
 import React from "react";
 
 import Box from "@mui/material/Box";
@@ -11,7 +12,9 @@ import {
   useSensors,
   DragOverlay,
   defaultDropAnimationSideEffects,
+  pointerWithin,
   closestCorners,
+  getFirstCollision,
 } from "@dnd-kit/core";
 import { arrayMove } from "@dnd-kit/sortable";
 import { cloneDeep } from "lodash";
@@ -58,6 +61,9 @@ function BoardContent({ board }) {
   const [activeDragItemData, setActiveDragItemData] = React.useState(null);
   const [oldColumnWhenDraggingCard, setOldColumnWhenDraggingCard] =
     React.useState(null);
+
+  // Điểm va chạm cuối cùng trước đó
+  const lastOverId = React.useRef(null);
 
   React.useEffect(() => {
     setOrderedColumns(mapOrder(board.columns, board.columnOrderIds, "_id"));
@@ -301,10 +307,56 @@ function BoardContent({ board }) {
     }),
   };
 
+  const collisionDetectionStrategy = React.useCallback(
+    (args) => {
+      if (activeDragItemType === ACTIVE_DRAG_ITEM_TYPE.COLUMN) {
+        return closestCorners({ ...args });
+      }
+
+      const pointerCollisions = pointerWithin(args);
+
+      if (!pointerCollisions?.length) return;
+
+      let overId = getFirstCollision(pointerCollisions, "id");
+
+      if (overId) {
+        const checkColumn = orderedColumns.find(
+          (column) => column?._id === overId
+        );
+
+        if (checkColumn) {
+          overId = closestCorners({
+            ...args,
+            droppableContainers: args.droppableContainers.filter(
+              (container) => {
+                return (
+                  container.id !== overId &&
+                  checkColumn?.cardOrderIds?.includes(container?.id)
+                );
+              }
+            ),
+          })[0]?.id;
+        }
+
+        lastOverId.current = overId;
+        return [{ id: overId }];
+      }
+
+      return lastOverId.current
+        ? [
+            {
+              id: lastOverId.current,
+            },
+          ]
+        : [];
+    },
+    [activeDragItemType, orderedColumns]
+  );
+
   return (
     <DndContext
       sensors={sensors}
-      collisionDetection={closestCorners}
+      collisionDetection={collisionDetectionStrategy}
       onDragStart={handleDragStart}
       onDragMove={handleDrgOver}
       onDragEnd={handleDragEnd}
