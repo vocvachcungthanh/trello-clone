@@ -17,12 +17,13 @@ import {
   getFirstCollision,
 } from "@dnd-kit/core";
 import { arrayMove } from "@dnd-kit/sortable";
-import { cloneDeep } from "lodash";
+import { cloneDeep, isEmpty } from "lodash";
 
 import { ListColums } from "./ListColumns";
 import { Column } from "./ListColumns/Column";
 import { Card } from "./ListColumns/Column/ListCards/Card";
 import { mapOrder } from "~/utils/sorts.js";
+import { generatePalaceholderCard } from "~/utils/formatters";
 
 const BOARD_CONTENT_STYLES = {
   backgroundColor: (theme) =>
@@ -116,6 +117,12 @@ function BoardContent({ board }) {
           (card) => card?._id !== activeDraggingCardId
         );
 
+        // thêm placeholde car nếu column rỗng
+
+        if (isEmpty(nextActiveColumn.cards)) {
+          nextActiveColumn.cards = [generatePalaceholderCard(nextActiveColumn)];
+        }
+
         nextActiveColumn.cardOrderIds = nextActiveColumn.cards.map(
           (card) => card?._id
         );
@@ -135,6 +142,12 @@ function BoardContent({ board }) {
           newCardIndex,
           0,
           rebuild_activeGraggingCardData
+        );
+
+        // Xóa placeholer Card di nếu nó tồn tại
+
+        nextOverColumn.cards = nextOverColumn.cards.filter(
+          (card) => !card.FE_PlaceholderCard
         );
 
         nextOverColumn.cardOrderIds = nextOverColumn.cards.map(
