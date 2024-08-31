@@ -1,5 +1,5 @@
 import React from "react";
-
+import { toast } from "react-toastify";
 import ListItemText from "@mui/material/ListItemText";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import Typography from "@mui/material/Typography";
@@ -87,7 +87,9 @@ function Column({ column }) {
 
   const addNewCard = () => {
     if (!newCardTitle) {
-      console.error("Pleas enter Column title");
+      toast.error("Pleas enter Column title", {
+        position: "bottom-left",
+      });
       return;
     }
 
