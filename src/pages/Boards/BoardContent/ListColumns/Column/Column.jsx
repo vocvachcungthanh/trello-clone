@@ -208,6 +208,7 @@ function Column({ column }) {
                 size="small"
                 variant="outlined"
                 autoFocus
+                data-no-dnd="true"
                 value={newCardTitle}
                 onChange={(e) => setNewCardTitle(e.target.value)}
                 sx={{
@@ -243,6 +244,7 @@ function Column({ column }) {
               />
 
               <Box
+                data-no-dnd="true"
                 sx={{
                   display: "flex",
                   alignItems: "center",
