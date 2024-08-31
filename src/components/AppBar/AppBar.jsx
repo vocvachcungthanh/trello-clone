@@ -30,10 +30,12 @@ function AppBar() {
   const renderClose = React.useMemo(() => {
     if (searchValue.length > 0) {
       return (
-        <CloseIcon
-          sx={{ color: "white", fontSize: "small", cursor: "pointer" }}
-          onClick={() => setSearchValue("")}
-        />
+        <InputAdornment position="end">
+          <CloseIcon
+            sx={{ color: "white", fontSize: "small", cursor: "pointer" }}
+            onClick={() => setSearchValue("")}
+          />
+        </InputAdornment>
       );
     }
   }, [searchValue]);

@@ -1,14 +1,16 @@
+import React from "react";
+
 import {
   SortableContext,
   horizontalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
-
+import TextField from "@mui/material/TextField";
+import CloseIcon from "@mui/icons-material/Close";
 import NoteAddIcon from "@mui/icons-material/NoteAdd";
 
 import { Column } from "./Column";
-import { useMemo } from "react";
 
 const LIST_COLUMNS_STYLES = {
   bgcolor: "inherit",
@@ -25,9 +27,147 @@ const LIST_COLUMNS_STYLES = {
 };
 
 function ListColumns({ columns }) {
-  const renderColumn = useMemo(() => {
+  const [openNewColumnForm, setOpenNewColumnForm] = React.useState(false);
+  const [newColumnTitle, setNewColumnTitle] = React.useState("");
+
+  const toggleOpenNewColumnForm = () =>
+    setOpenNewColumnForm(!openNewColumnForm);
+
+  const addNewColumn = () => {
+    if (!newColumnTitle) {
+      console.error("Pleas enter Column title");
+      return;
+    }
+
+    console.log({ newColumnTitle });
+
+    toggleOpenNewColumnForm();
+    setNewColumnTitle("");
+  };
+
+  const renderColumn = React.useMemo(() => {
     return columns?.map((item) => <Column key={item._id} column={item} />);
   }, [columns]);
+
+  const renderFormColum = React.useMemo(() => {
+    return (
+      <Box
+        sx={{
+          minWidth: "250px",
+          maxWidth: "250px",
+          mx: 2,
+          p: 1,
+          borderRadius: "6px",
+          height: "fit-content",
+          bgcolor: "#ffffff3d",
+          display: "flex",
+          flexDirection: "column",
+          gap: 1,
+        }}
+      >
+        <TextField
+          label="Enter column title ..."
+          type="text"
+          size="small"
+          variant="outlined"
+          autoFocus
+          value={newColumnTitle}
+          onChange={(e) => setNewColumnTitle(e.target.value)}
+          sx={{
+            "& label": {
+              color: "white",
+            },
+            "& input": {
+              color: "white",
+            },
+
+            "& label.Mui-focused": {
+              color: "white",
+            },
+            "& .MuiOutlinedInput-root": {
+              "& fieldset": {
+                borderColor: "white",
+              },
+              "&:hover fieldset": {
+                borderColor: "white",
+              },
+              "&.Mui-focused fieldset": {
+                borderColor: "white",
+              },
+            },
+          }}
+        />
+
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            gap: 1,
+          }}
+        >
+          <Button
+            onClick={addNewColumn}
+            variant="contained"
+            color="success"
+            size="small"
+            sx={{
+              boxShadow: "none",
+              border: "0.5px solid",
+              borderColor: (theme) => theme.palette.success.main,
+              "&:hover": {
+                bgcolor: (theme) => theme.palette.success.main,
+              },
+            }}
+          >
+            Add Column
+          </Button>
+          <CloseIcon
+            sx={{
+              color: "white",
+              fontSize: "small",
+              cursor: "pointer",
+              "&:hover": { color: (theme) => theme.palette.warning.light },
+            }}
+            onClick={toggleOpenNewColumnForm}
+          />
+        </Box>
+      </Box>
+    );
+  }, [openNewColumnForm, newColumnTitle]);
+
+  const renderAddNewColumn = React.useMemo(() => {
+    return (
+      <Box
+        sx={{
+          minWidth: "250px",
+          maxWidth: "250px",
+          mx: 2,
+          borderRadius: "6px",
+          height: "fit-content",
+          bgcolor: "#ffffff3d",
+        }}
+        onClick={toggleOpenNewColumnForm}
+      >
+        <Button
+          startIcon={<NoteAddIcon />}
+          sx={{
+            color: "white",
+            width: "100%",
+            justifyContent: "flex-start",
+            pl: 2.5,
+            py: 1,
+          }}
+        >
+          Add new column
+        </Button>
+      </Box>
+    );
+  }, [openNewColumnForm, newColumnTitle]);
+
+  const renderAddNewColumnForm = React.useMemo(
+    () => (!openNewColumnForm ? renderAddNewColumn : renderFormColum),
+    [openNewColumnForm, newColumnTitle]
+  );
 
   return (
     <SortableContext
@@ -36,28 +176,7 @@ function ListColumns({ columns }) {
     >
       <Box sx={LIST_COLUMNS_STYLES}>
         {renderColumn}
-        <Box
-          sx={{
-            minWidth: "200px",
-            maxWidth: "200px",
-            borderRadius: "6px",
-            height: "fit-content",
-            bgcolor: "#ffffff3d",
-          }}
-        >
-          <Button
-            startIcon={<NoteAddIcon />}
-            sx={{
-              color: "white",
-              width: "100%",
-              justifyContent: "flex-start",
-              pl: 2.5,
-              py: 1,
-            }}
-          >
-            Add new column
-          </Button>
-        </Box>
+        {renderAddNewColumnForm}
       </Box>
     </SortableContext>
   );

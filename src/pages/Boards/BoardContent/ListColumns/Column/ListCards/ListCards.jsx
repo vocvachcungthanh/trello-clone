@@ -7,7 +7,7 @@ import { Card } from "./Card";
 import { useMemo } from "react";
 
 const LIST_CARDS_STYLES = {
-  p: "0 5px",
+  p: "0 5px 5px 5px",
   margin: "0 5px",
   display: "flex",
   flexDirection: "column",
