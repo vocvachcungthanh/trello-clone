@@ -1,5 +1,6 @@
 import React from "react";
 
+import { toast } from "react-toastify";
 import {
   SortableContext,
   horizontalListSortingStrategy,
@@ -35,7 +36,9 @@ function ListColumns({ columns }) {
 
   const addNewColumn = () => {
     if (!newColumnTitle) {
-      console.error("Pleas enter Column title");
+      toast.error("Pleas enter Column title", {
+        position: "bottom-left",
+      });
       return;
     }
 
