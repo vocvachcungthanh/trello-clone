@@ -27,14 +27,14 @@ const LIST_COLUMNS_STYLES = {
   },
 };
 
-function ListColumns({ columns }) {
+function ListColumns({ columns, createNewColumn, createNewCard }) {
   const [openNewColumnForm, setOpenNewColumnForm] = React.useState(false);
   const [newColumnTitle, setNewColumnTitle] = React.useState("");
 
   const toggleOpenNewColumnForm = () =>
     setOpenNewColumnForm(!openNewColumnForm);
 
-  const addNewColumn = () => {
+  const addNewColumn = async () => {
     if (!newColumnTitle) {
       toast.error("Pleas enter Column title", {
         position: "bottom-left",
@@ -42,14 +42,18 @@ function ListColumns({ columns }) {
       return;
     }
 
-    console.log({ newColumnTitle });
+    await createNewColumn({
+      title: newColumnTitle,
+    });
 
     toggleOpenNewColumnForm();
     setNewColumnTitle("");
   };
 
   const renderColumn = React.useMemo(() => {
-    return columns?.map((item) => <Column key={item._id} column={item} />);
+    return columns?.map((item) => (
+      <Column key={item._id} column={item} createNewCard={createNewCard} />
+    ));
   }, [columns]);
 
   const renderFormColum = React.useMemo(() => {

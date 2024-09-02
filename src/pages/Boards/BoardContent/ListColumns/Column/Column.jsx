@@ -27,7 +27,6 @@ import CloseIcon from "@mui/icons-material/Close";
 import { ListCards } from "./ListCards";
 
 import { mapOrder } from "~/utils/sorts.js";
-import theme from "~/theme";
 
 const COLUMN_STYLES = {
   minWidth: 300,
@@ -53,7 +52,7 @@ const COLUMN_FOOTER_STYLES = {
   p: 2,
 };
 
-function Column({ column }) {
+function Column({ column, createNewCard }) {
   const {
     attributes,
     listeners,
@@ -85,7 +84,7 @@ function Column({ column }) {
 
   const toggleOpenNewCardForm = () => setOpenNewCardForm(!openNewCardForm);
 
-  const addNewCard = () => {
+  const addNewCard = async () => {
     if (!newCardTitle) {
       toast.error("Pleas enter Column title", {
         position: "bottom-left",
@@ -93,7 +92,10 @@ function Column({ column }) {
       return;
     }
 
-    console.log({ newCardTitle });
+    await createNewCard({
+      title: newCardTitle,
+      columnId: column._id,
+    });
 
     toggleOpenNewCardForm();
     setNewCardTitle("");
