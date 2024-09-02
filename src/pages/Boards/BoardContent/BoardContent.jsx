@@ -40,7 +40,7 @@ const ACTIVE_DRAG_ITEM_TYPE = {
   CARD: "ACTIVE_DRAG_ITEM_TYPE_CARD",
 };
 
-function BoardContent({ board, createNewColumn, createNewCard }) {
+function BoardContent({ board, createNewColumn, createNewCard, moveColumns }) {
   // Yêu cầu chuội dịch chuyển 10px mới kích hoạn event, fix trường hợp click bị gọi event
   const mouseSensor = useSensor(MouseSensor, {
     activationConstraint: {
@@ -209,7 +209,7 @@ function BoardContent({ board, createNewColumn, createNewCard }) {
     }
   };
 
-  const handleDragEnd = (event) => {
+  const handleDragEnd = async (event) => {
     const { active, over } = event;
 
     // Xử lý kẻo thả card
@@ -298,6 +298,7 @@ function BoardContent({ board, createNewColumn, createNewCard }) {
         );
 
         // / Cái này sau dùng để gọi api
+        await moveColumns(dndOrderedColumns);
         // const dndOrderedColumsIds = dndOrderedColumns.map((c) => c._id);
 
         // set lại khi kéo thả

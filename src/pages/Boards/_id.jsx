@@ -13,6 +13,7 @@ import {
   createNewColumnAPI,
   fetchBoardDetailAPI,
   createNewCardAPI,
+  updateBoardDetailAPI,
 } from "~/apis";
 
 function Board() {
@@ -72,6 +73,26 @@ function Board() {
     }
   };
 
+  // moveColumn
+
+  const moveColumns = async (dndOrderedColumns) => {
+    const dndOrderedColumnsIds = dndOrderedColumns.map((c) => c._id);
+
+    const newBoard = { ...board };
+
+    newBoard.columns = dndOrderedColumns;
+
+    newBoard.columnOrderIds = dndOrderedColumnsIds;
+
+    setBoard(newBoard);
+
+    // goi api uplodate board
+
+    await updateBoardDetailAPI(newBoard._id, {
+      columnOrderIds: dndOrderedColumnsIds,
+    });
+  };
+
   return (
     <Container disableGutters maxWidth={false} sx={{ height: "100vh" }}>
       <AppBar />
@@ -80,6 +101,7 @@ function Board() {
         board={board}
         createNewColumn={createNewColumn}
         createNewCard={createNewCard}
+        moveColumns={moveColumns}
       />
     </Container>
   );
