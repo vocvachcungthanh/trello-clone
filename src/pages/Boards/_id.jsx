@@ -7,6 +7,7 @@ import { BoardBar } from "./BoardBar";
 import { BoardContent } from "./BoardContent";
 import { generatePalaceholderCard } from "~/utils/formatters";
 import { isEmpty } from "lodash";
+import { mapOrder } from "~/utils/sorts.js";
 
 // api
 import {
@@ -14,20 +15,29 @@ import {
   fetchBoardDetailAPI,
   createNewCardAPI,
   updateBoardDetailAPI,
+  updateColumnDetailAPI,
+  moveCardToDifferentColumnAPI,
 } from "~/apis";
+
+import Box from "@mui/material/Box";
+import CircularProgress from "@mui/material/CircularProgress";
+import Typography from "@mui/material/Typography";
 
 function Board() {
   const [board, setBoard] = React.useState(null);
 
   React.useEffect(() => {
-    const boardId = "66d3ddacc467f451c060e5d4";
+    const boardId = "66d7415119318bb6a7007e3b";
     fetchBoardDetailAPI(boardId).then((board) => {
-      // Keo tha vao 1 column Rỗng
+      board.columns = mapOrder(board?.columns, board?.columnOrderIds, "_id");
 
       board.columns.forEach((column) => {
+        // Keo tha vao 1 column Rỗng
         if (isEmpty(column.cards)) {
           column.cards = [generatePalaceholderCard(column)];
           column.cardOrderIds = [generatePalaceholderCard(column)._id];
+        } else {
+          column.cards = mapOrder(column?.cards, column?.cardOrderIds, "_id");
         }
       });
       setBoard(board);
@@ -93,6 +103,100 @@ function Board() {
     });
   };
 
+  // moveCardInTheSameColumn xử lý dịch chuyển card trong cùng column
+  // Chỉ cần gọi API để cập nhật mảng cardOrderIds của column chưa nó (thay đổi vị trí trong mảng)
+  const moveCardInTheSameColumn = async (
+    dndOrderedCards,
+    dndOrderedCardIds,
+    columnId
+  ) => {
+    // Update cho chuẩn set board
+
+    const newBoard = { ...board };
+
+    const columnToUpdate = newBoard.columns.find(
+      (column) => column._id === columnId
+    );
+
+    if (columnToUpdate) {
+      columnToUpdate.cards = dndOrderedCards;
+      columnToUpdate.cardOrderIds = dndOrderedCardIds;
+    }
+
+    setBoard(newBoard);
+
+    // Goi Api update column
+
+    await updateColumnDetailAPI(columnId, {
+      cardOrderIds: dndOrderedCardIds,
+    });
+  };
+
+  /**
+   * Khi di chuyển card sang Column khác:
+   * B1: Cập nhật mảng  của column ban đầu chứa nó (Hiểu bản chất là xóa cái _id của Card ra khỏi mảng)
+   * B2. Cập nhật mản cardOrderIds của column tiếp theo (Hiểu bản chất là thêm _id của Card vào mảng)
+   * B3. Cập nhật lại trương columnId mới của cái Card đã kéo
+   * => Làm một API support riêng
+   */
+  const moveCardToDifferentColumn = async (
+    currenCardId,
+    prevColumnId,
+    nextColumnId,
+    dndOrderedColumns
+  ) => {
+    const dndOrderedColumnsIds = dndOrderedColumns.map((c) => c._id);
+
+    const newBoard = { ...board };
+
+    newBoard.columns = dndOrderedColumns;
+
+    newBoard.columnOrderIds = dndOrderedColumnsIds;
+    setBoard(newBoard);
+
+    // Goi API xủ lý
+
+    // xóa placeholder-card
+
+    const removePlaceholderCard = (cardOrderIds) => {
+      if (cardOrderIds.includes("placeholder-card")) {
+        return cardOrderIds;
+      } else {
+        return [];
+      }
+    };
+
+    await moveCardToDifferentColumnAPI({
+      currenCardId,
+      prevColumnId,
+      prevCardOrderIds: removePlaceholderCard(
+        dndOrderedColumns.find((c) => c._id === prevColumnId)?.cardOrderIds
+      ),
+      nextColumnId,
+      nextCardOrderIds: removePlaceholderCard(
+        dndOrderedColumns.find((c) => c._id === nextColumnId)?.cardOrderIds
+      ),
+    });
+  };
+
+  if (!board) {
+    return (
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          width: "100vw",
+          height: "100vh",
+          gap: 2,
+        }}
+      >
+        <CircularProgress />
+        <Typography>Loading Board ...</Typography>
+      </Box>
+    );
+  }
+
   return (
     <Container disableGutters maxWidth={false} sx={{ height: "100vh" }}>
       <AppBar />
@@ -102,6 +206,8 @@ function Board() {
         createNewColumn={createNewColumn}
         createNewCard={createNewCard}
         moveColumns={moveColumns}
+        moveCardInTheSameColumn={moveCardInTheSameColumn}
+        moveCardToDifferentColumn={moveCardToDifferentColumn}
       />
     </Container>
   );

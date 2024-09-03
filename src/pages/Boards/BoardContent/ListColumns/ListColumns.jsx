@@ -54,7 +54,7 @@ function ListColumns({ columns, createNewColumn, createNewCard }) {
     return columns?.map((item) => (
       <Column key={item._id} column={item} createNewCard={createNewCard} />
     ));
-  }, [columns]);
+  }, [columns, createNewCard]);
 
   const renderFormColum = React.useMemo(() => {
     return (
@@ -140,7 +140,7 @@ function ListColumns({ columns, createNewColumn, createNewCard }) {
         </Box>
       </Box>
     );
-  }, [openNewColumnForm, newColumnTitle]);
+  }, [openNewColumnForm, newColumnTitle, createNewColumn]);
 
   const renderAddNewColumn = React.useMemo(() => {
     return (
@@ -173,7 +173,7 @@ function ListColumns({ columns, createNewColumn, createNewCard }) {
 
   const renderAddNewColumnForm = React.useMemo(
     () => (!openNewColumnForm ? renderAddNewColumn : renderFormColum),
-    [openNewColumnForm, newColumnTitle]
+    [openNewColumnForm, newColumnTitle, columns, createNewCard]
   );
 
   return (

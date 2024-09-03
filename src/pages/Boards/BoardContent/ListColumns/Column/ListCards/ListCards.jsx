@@ -31,17 +31,16 @@ const LIST_CARDS_STYLES = {
 };
 
 function ListCards({ cards }) {
-  const renderCard = useMemo(
-    () => cards?.map((item) => <Card key={item._id} card={item} />),
-    [cards]
-  );
-
   return (
     <SortableContext
       items={cards?.map((c) => c._id)}
       strategy={verticalListSortingStrategy}
     >
-      <Box sx={LIST_CARDS_STYLES}>{renderCard}</Box>
+      <Box sx={LIST_CARDS_STYLES}>
+        {cards?.map((item) => (
+          <Card key={item._id} card={item} />
+        ))}
+      </Box>
     </SortableContext>
   );
 }

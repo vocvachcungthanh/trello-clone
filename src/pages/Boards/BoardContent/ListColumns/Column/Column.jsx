@@ -26,8 +26,6 @@ import CloudIcon from "@mui/icons-material/Cloud";
 import CloseIcon from "@mui/icons-material/Close";
 import { ListCards } from "./ListCards";
 
-import { mapOrder } from "~/utils/sorts.js";
-
 const COLUMN_STYLES = {
   minWidth: 300,
   maxWidth: 300,
@@ -77,7 +75,7 @@ function Column({ column, createNewCard }) {
 
   const handleClose = () => setAnchorEl(null);
 
-  const orderedCards = mapOrder(column?.cards, column?.cardOrderIds, "_id");
+  const orderedCards = column.cards;
 
   const [openNewCardForm, setOpenNewCardForm] = React.useState(false);
   const [newCardTitle, setNewCardTitle] = React.useState("");
