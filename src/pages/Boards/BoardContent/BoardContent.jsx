@@ -6,8 +6,6 @@ import Box from "@mui/material/Box";
 // thư viện kéo thả
 import {
   DndContext,
-  // MouseSensor,
-  // TouchSensor,
   useSensor,
   useSensors,
   DragOverlay,
@@ -24,7 +22,7 @@ import { cloneDeep, isEmpty } from "lodash";
 import { ListColums } from "./ListColumns";
 import { Column } from "./ListColumns/Column";
 import { Card } from "./ListColumns/Column/ListCards/Card";
-import { mapOrder } from "~/utils/sorts.js";
+
 import { generatePalaceholderCard } from "~/utils/formatters";
 
 const BOARD_CONTENT_STYLES = {
@@ -40,7 +38,14 @@ const ACTIVE_DRAG_ITEM_TYPE = {
   CARD: "ACTIVE_DRAG_ITEM_TYPE_CARD",
 };
 
-function BoardContent({ board, createNewColumn, createNewCard, moveColumns }) {
+function BoardContent({
+  board,
+  createNewColumn,
+  createNewCard,
+  moveColumns,
+  moveCardInTheSameColumn,
+  moveCardToDifferentColumn,
+}) {
   // Yêu cầu chuội dịch chuyển 10px mới kích hoạn event, fix trường hợp click bị gọi event
   const mouseSensor = useSensor(MouseSensor, {
     activationConstraint: {
@@ -69,7 +74,7 @@ function BoardContent({ board, createNewColumn, createNewCard, moveColumns }) {
   const lastOverId = React.useRef(null);
 
   React.useEffect(() => {
-    setOrderedColumns(mapOrder(board?.columns, board?.columnOrderIds, "_id"));
+    setOrderedColumns(board.columns);
   }, [board]);
 
   const findColumnByCardId = (cardId) => {
@@ -78,6 +83,7 @@ function BoardContent({ board, createNewColumn, createNewCard, moveColumns }) {
     );
   };
 
+  // Khởi tạo Function chung xử lý việc cập nhật lại state trong trường hợp di chuyển Card giữa các Column khác nhau
   const moveCardBetweenDifferentColums = (
     overColumn,
     overCardId,
@@ -85,7 +91,8 @@ function BoardContent({ board, createNewColumn, createNewCard, moveColumns }) {
     over,
     activeColumn,
     activeDraggingCardId,
-    activeDraggingCardData
+    activeDraggingCardData,
+    TriggerFrom
   ) => {
     setOrderedColumns((prevColumns) => {
       const overCardIndex = overColumn?.cards?.findIndex(
@@ -157,6 +164,17 @@ function BoardContent({ board, createNewColumn, createNewCard, moveColumns }) {
         );
       }
 
+      // Nếu function này được gọi từ handleDragEnd nghĩa là đã kéo thả xong, lúc này mới xư lý gọi API 1 lần ở đây
+      if (TriggerFrom === "handleDragEnd") {
+        // Gọi api kéo card giữa 2 column
+
+        moveCardToDifferentColumn(
+          activeDraggingCardId,
+          oldColumnWhenDraggingCard._id,
+          nextOverColumn._id,
+          nextColumns
+        );
+      }
       return nextColumns;
     });
   };
@@ -204,7 +222,8 @@ function BoardContent({ board, createNewColumn, createNewCard, moveColumns }) {
         over,
         activeColumn,
         activeDraggingCardId,
-        activeDraggingCardData
+        activeDraggingCardData,
+        "handleDrgOver"
       );
     }
   };
@@ -239,9 +258,11 @@ function BoardContent({ board, createNewColumn, createNewCard, moveColumns }) {
           over,
           activeColumn,
           activeDraggingCardId,
-          activeDraggingCardData
+          activeDraggingCardData,
+          "handleDragEnd"
         );
       } else {
+        // Hành động kéo thả card trong cùng một column
         // lấy vị trị cũ (từ thăng oldColumnWhenDraggingCard)
         const oldCardIndex = oldColumnWhenDraggingCard?.cards?.findIndex(
           (c) => c._id === activeDragItemId
@@ -257,6 +278,7 @@ function BoardContent({ board, createNewColumn, createNewCard, moveColumns }) {
           oldCardIndex,
           newCaridIndex
         );
+        const dndOrderedCardIds = dndOrderedCards.map((card) => card._id);
 
         setOrderedColumns((prevColumns) => {
           const nextColumns = cloneDeep(prevColumns);
@@ -268,9 +290,15 @@ function BoardContent({ board, createNewColumn, createNewCard, moveColumns }) {
           );
 
           targetColumn.cards = dndOrderedCards;
-          targetColumn.cardOrderIds = dndOrderedCards.map((card) => card._id);
+          targetColumn.cardOrderIds = dndOrderedCardIds;
           return nextColumns;
         });
+
+        moveCardInTheSameColumn(
+          dndOrderedCards,
+          dndOrderedCardIds,
+          oldColumnWhenDraggingCard._id
+        );
       }
     }
 
