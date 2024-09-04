@@ -27,7 +27,12 @@ const LIST_COLUMNS_STYLES = {
   },
 };
 
-function ListColumns({ columns, createNewColumn, createNewCard }) {
+function ListColumns({
+  columns,
+  createNewColumn,
+  createNewCard,
+  deleteColumnDetails,
+}) {
   const [openNewColumnForm, setOpenNewColumnForm] = React.useState(false);
   const [newColumnTitle, setNewColumnTitle] = React.useState("");
 
@@ -52,9 +57,14 @@ function ListColumns({ columns, createNewColumn, createNewCard }) {
 
   const renderColumn = React.useMemo(() => {
     return columns?.map((item) => (
-      <Column key={item._id} column={item} createNewCard={createNewCard} />
+      <Column
+        key={item._id}
+        column={item}
+        createNewCard={createNewCard}
+        deleteColumnDetails={deleteColumnDetails}
+      />
     ));
-  }, [columns, createNewCard]);
+  }, [columns, createNewCard, deleteColumnDetails]);
 
   const renderFormColum = React.useMemo(() => {
     return (

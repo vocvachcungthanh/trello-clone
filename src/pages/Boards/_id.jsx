@@ -17,17 +17,19 @@ import {
   updateBoardDetailAPI,
   updateColumnDetailAPI,
   moveCardToDifferentColumnAPI,
+  deleteColumnDetailAPI,
 } from "~/apis";
 
 import Box from "@mui/material/Box";
 import CircularProgress from "@mui/material/CircularProgress";
 import Typography from "@mui/material/Typography";
+import { toast } from "react-toastify";
 
 function Board() {
   const [board, setBoard] = React.useState(null);
 
   React.useEffect(() => {
-    const boardId = "66d7415119318bb6a7007e3b";
+    const boardId = "66d894be8f1b49690a9b9d1c";
     fetchBoardDetailAPI(boardId).then((board) => {
       board.columns = mapOrder(board?.columns, board?.columnOrderIds, "_id");
 
@@ -179,6 +181,23 @@ function Board() {
     });
   };
 
+  // Xử lý xóa một Column và Cards bên trong nó
+  const deleteColumnDetails = async (columnId) => {
+    const newBoard = { ...board };
+
+    newBoard.columns = newBoard.columns.filter((c) => c._id !== columnId);
+
+    newBoard.columnOrderIds = newBoard.columnOrderIds.filter(
+      (_id) => _id !== columnId
+    );
+
+    setBoard(newBoard);
+
+    await deleteColumnDetailAPI(columnId).then((res) => {
+      toast.success(res?.deleteResult);
+    });
+  };
+
   if (!board) {
     return (
       <Box
@@ -208,6 +227,7 @@ function Board() {
         moveColumns={moveColumns}
         moveCardInTheSameColumn={moveCardInTheSameColumn}
         moveCardToDifferentColumn={moveCardToDifferentColumn}
+        deleteColumnDetails={deleteColumnDetails}
       />
     </Container>
   );
