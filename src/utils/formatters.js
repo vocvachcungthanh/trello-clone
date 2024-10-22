@@ -4,11 +4,12 @@ export const capitalizeFirstLetter = (val) => {
   return `${val.charAt(0).toUpperCase()}${val.slice(1)}`;
 };
 
-export const generatePalaceholderCard = (colummn) => {
+export const generatePlaceholderCard = (column) => {
   return {
-    _id: `${colummn._id}-placeholder-card`,
-    boardId: colummn.boardId,
-    colummnId: colummn._id,
-    FE_PLACEHODER_CARD: true,
+    _id: `${column._id}-placeholder-card`,
+    boardId: column.boardId,
+    columnId: column._id,
+    FE_PLACEHOLDER_CARD: true,
   };
 };
+
