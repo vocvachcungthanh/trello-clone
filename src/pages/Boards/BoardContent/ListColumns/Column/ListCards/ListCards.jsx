@@ -4,7 +4,7 @@ import {
 } from "@dnd-kit/sortable";
 import Box from "@mui/material/Box";
 import { Card } from "./Card";
-import { useMemo } from "react";
+
 
 const LIST_CARDS_STYLES = {
   p: "0 5px 5px 5px",
@@ -31,13 +31,14 @@ const LIST_CARDS_STYLES = {
 };
 
 function ListCards({ cards }) {
+
   return (
     <SortableContext
-      items={cards?.map((c) => c._id)}
+      items={cards && cards?.map((c) => c._id)}
       strategy={verticalListSortingStrategy}
     >
       <Box sx={LIST_CARDS_STYLES}>
-        {cards?.map((item) => (
+        {cards && cards?.map((item) => (
           <Card key={item._id} card={item} />
         ))}
       </Box>

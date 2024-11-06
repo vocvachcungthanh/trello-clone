@@ -1,1 +1,1 @@
-export { default as ListColums } from "./ListColumns";
+export { default as ListColumns } from "./ListColumns";

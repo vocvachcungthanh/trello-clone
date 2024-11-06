@@ -10,11 +10,25 @@ import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
 import CloseIcon from "@mui/icons-material/Close";
 import NoteAddIcon from "@mui/icons-material/NoteAdd";
+import { useDispatch, useSelector } from 'react-redux'
+import { cloneDeep } from "lodash";
+
+
+// api
+import {
+  createNewColumnAPI,
+} from "~/apis";
+import { generatePlaceholderCard } from "~/utils/formatters";
+import {
+  updateCurrentActiveBoard,
+  selectCurrentActiveBoard
+} from '~/redux/activeBoard/activeBoardSlice'
+
 
 import { Column } from "./Column";
 
 const LIST_COLUMNS_STYLES = {
-  bgcolor: "inherit",
+  bgColor: "inherit",
   width: "100%",
   height: "100%",
   display: "flex",
@@ -29,42 +43,59 @@ const LIST_COLUMNS_STYLES = {
 
 function ListColumns({
   columns,
-  createNewColumn,
-  createNewCard,
-  deleteColumnDetails,
 }) {
+  const dispatch = useDispatch();
+  const board = useSelector(selectCurrentActiveBoard);
   const [openNewColumnForm, setOpenNewColumnForm] = React.useState(false);
   const [newColumnTitle, setNewColumnTitle] = React.useState("");
 
-  const toggleOpenNewColumnForm = () =>
-    setOpenNewColumnForm(!openNewColumnForm);
+  const toggleOpenNewColumnForm = React.useCallback(() => setOpenNewColumnForm(!openNewColumnForm), [openNewColumnForm]);
 
-  const addNewColumn = async () => {
+  const addNewColumn = React.useCallback(async () => {
     if (!newColumnTitle) {
-      toast.error("Pleas enter Column title", {
+      toast.error("Please enter Column title", {
         position: "bottom-left",
       });
       return;
     }
 
-    await createNewColumn({
+    const newColumnData = {
       title: newColumnTitle,
+    };
+
+    // Call API to create new column and refresh board state
+    const createdNewColumn = await createNewColumnAPI({
+      ...newColumnData,
+      boardId: board._id,
     });
 
+    createdNewColumn.cards = [generatePlaceholderCard(createdNewColumn)];
+    createdNewColumn.cardOrderIds = [
+      generatePlaceholderCard(createdNewColumn)._id,
+    ];
+
+    const newBoard = cloneDeep(board); // Deep copy to maintain immutability
+
+    newBoard.columns.push(createdNewColumn);
+    newBoard.columnOrderIds.push(createdNewColumn._id);
+
+    dispatch(updateCurrentActiveBoard(newBoard));
     toggleOpenNewColumnForm();
     setNewColumnTitle("");
-  };
+  }, [board, newColumnTitle, toggleOpenNewColumnForm, dispatch]); // Dependencies
+
 
   const renderColumn = React.useMemo(() => {
-    return columns?.map((item) => (
+    if (!columns) return null
+
+    return columns && columns?.map((item) => (
       <Column
         key={item._id}
         column={item}
-        createNewCard={createNewCard}
-        deleteColumnDetails={deleteColumnDetails}
       />
     ));
-  }, [columns, createNewCard, deleteColumnDetails]);
+  }, [columns]);
+
 
   const renderFormColum = React.useMemo(() => {
     return (
@@ -76,7 +107,7 @@ function ListColumns({
           p: 1,
           borderRadius: "6px",
           height: "fit-content",
-          bgcolor: "#ffffff3d",
+          bgColor: "#ffffff3d",
           display: "flex",
           flexDirection: "column",
           gap: 1,
@@ -132,7 +163,7 @@ function ListColumns({
               border: "0.5px solid",
               borderColor: (theme) => theme.palette.success.main,
               "&:hover": {
-                bgcolor: (theme) => theme.palette.success.main,
+                bgColor: (theme) => theme.palette.success.main,
               },
             }}
           >
@@ -150,7 +181,7 @@ function ListColumns({
         </Box>
       </Box>
     );
-  }, [openNewColumnForm, newColumnTitle, createNewColumn]);
+  }, [newColumnTitle, addNewColumn, toggleOpenNewColumnForm]);
 
   const renderAddNewColumn = React.useMemo(() => {
     return (
@@ -161,7 +192,7 @@ function ListColumns({
           mx: 2,
           borderRadius: "6px",
           height: "fit-content",
-          bgcolor: "#ffffff3d",
+          bgColor: "#ffffff3d",
         }}
         onClick={toggleOpenNewColumnForm}
       >
@@ -179,16 +210,16 @@ function ListColumns({
         </Button>
       </Box>
     );
-  }, [openNewColumnForm, newColumnTitle]);
+  }, [toggleOpenNewColumnForm]);
 
   const renderAddNewColumnForm = React.useMemo(
     () => (!openNewColumnForm ? renderAddNewColumn : renderFormColum),
-    [openNewColumnForm, newColumnTitle, columns, createNewCard]
+    [openNewColumnForm, renderAddNewColumn, renderFormColum]
   );
-
+  47
   return (
     <SortableContext
-      items={columns?.map((c) => c._id)}
+      items={columns ? columns.map((c) => c._id) : []}
       strategy={horizontalListSortingStrategy}
     >
       <Box sx={LIST_COLUMNS_STYLES}>
