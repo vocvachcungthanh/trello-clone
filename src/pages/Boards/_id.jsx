@@ -1,8 +1,5 @@
 import React from "react";
 import Container from "@mui/material/Container";
-import Box from "@mui/material/Box";
-import CircularProgress from "@mui/material/CircularProgress";
-import Typography from "@mui/material/Typography";
 import { useDispatch, useSelector } from "react-redux";
 import { cloneDeep } from "lodash";
 import { useParams } from "react-router-dom";
@@ -10,6 +7,7 @@ import { useParams } from "react-router-dom";
 import { AppBar } from "~/components/AppBar";
 import { BoardBar } from "./BoardBar";
 import { BoardContent } from "./BoardContent";
+import PageLoadingSpinner from "~/components/Loading/PageLoadingSpinner";
 
 import {
   fetchBoardDetailAPI,
@@ -113,12 +111,10 @@ function Board() {
     let prevCardOrderIds = dndOrderedColumns.find(
       (c) => c._id === prevColumnId
     )?.cardOrderIds;
-    console.log("🚀 ~ Board ~ prevCardOrderIds:", prevCardOrderIds);
 
     let nextCardOrderIds = dndOrderedColumns.find(
       (c) => c._id === nextColumnId
     )?.cardOrderIds;
-    console.log("🚀 ~ Board ~ nextCardOrderIds:", nextCardOrderIds);
 
     // xóa placeholder-card placeholder-card
     prevCardOrderIds = prevCardOrderIds.filter(
@@ -138,21 +134,7 @@ function Board() {
   };
 
   if (!board) {
-    return (
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          width: "100vw",
-          height: "100vh",
-          gap: 2,
-        }}
-      >
-        <CircularProgress />
-        <Typography>Loading Board ...</Typography>
-      </Box>
-    );
+    return <PageLoadingSpinner caption="Loading Board..." />;
   }
 
   return (

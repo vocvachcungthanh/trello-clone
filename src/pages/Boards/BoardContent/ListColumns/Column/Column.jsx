@@ -1,5 +1,5 @@
 import React from "react";
-import { useDispatch, useSelector } from 'react-redux'
+import { useDispatch, useSelector } from "react-redux";
 import { cloneDeep } from "lodash";
 import { toast } from "react-toastify";
 import ListItemText from "@mui/material/ListItemText";
@@ -30,9 +30,8 @@ import CloseIcon from "@mui/icons-material/Close";
 import { createNewCardAPI, deleteColumnDetailAPI } from "~/apis";
 import {
   updateCurrentActiveBoard,
-  selectCurrentActiveBoard
-} from '~/redux/activeBoard/activeBoardSlice'
-
+  selectCurrentActiveBoard,
+} from "~/redux/activeBoard/activeBoardSlice";
 
 import { ListCards } from "./ListCards";
 import { useConfirm } from "material-ui-confirm";
@@ -108,32 +107,31 @@ function Column({ column }) {
     const newCardData = {
       title: newCardTitle,
       columnId: column._id,
-    }
+    };
 
     const createdNewCard = await createNewCardAPI({
       ...newCardData,
       boardId: board._id,
     });
 
-    const newBoard = cloneDeep(board)
+    const newBoard = cloneDeep(board);
 
     const columnToUpdate = newBoard.columns.find(
       (column) => column._id === createdNewCard.columnId
     );
 
     if (columnToUpdate) {
-
       // Nếu column rỗng: Bản chất là đang chứa một cái Placeholder Card
-      if (columnToUpdate.cards.some(card => card.FE_PLACEHOLDER_CARD)) {
-        columnToUpdate.cards = [createdNewCard]
-        columnToUpdate.cardOrderIds = [createdNewCard._id]
+      if (columnToUpdate.cards.some((card) => card.FE_PLACEHOLDER_CARD)) {
+        columnToUpdate.cards = [createdNewCard];
+        columnToUpdate.cardOrderIds = [createdNewCard._id];
       } else {
         columnToUpdate.cards.push(createdNewCard);
         columnToUpdate.cardOrderIds.push(createdNewCard._id);
       }
     }
 
-    dispatch(updateCurrentActiveBoard(newBoard))
+    dispatch(updateCurrentActiveBoard(newBoard));
 
     // createNewCard này có nhiện vụ gọi API tạo mới Column và làm mới lại dữ liệu State Board
 
@@ -163,7 +161,7 @@ function Column({ column }) {
           (_id) => _id !== column._id
         );
 
-        dispatch(updateCurrentActiveBoard(newBoard))
+        dispatch(updateCurrentActiveBoard(newBoard));
 
         deleteColumnDetailAPI(column._id).then((res) => {
           toast.success(res?.deleteResult);
@@ -361,6 +359,7 @@ function Column({ column }) {
                 }}
               >
                 <Button
+                  className="interceptor-loading"
                   onClick={addNewCard}
                   variant="contained"
                   color="success"

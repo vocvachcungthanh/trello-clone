@@ -10,20 +10,16 @@ import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
 import CloseIcon from "@mui/icons-material/Close";
 import NoteAddIcon from "@mui/icons-material/NoteAdd";
-import { useDispatch, useSelector } from 'react-redux'
+import { useDispatch, useSelector } from "react-redux";
 import { cloneDeep } from "lodash";
 
-
 // api
-import {
-  createNewColumnAPI,
-} from "~/apis";
+import { createNewColumnAPI } from "~/apis";
 import { generatePlaceholderCard } from "~/utils/formatters";
 import {
   updateCurrentActiveBoard,
-  selectCurrentActiveBoard
-} from '~/redux/activeBoard/activeBoardSlice'
-
+  selectCurrentActiveBoard,
+} from "~/redux/activeBoard/activeBoardSlice";
 
 import { Column } from "./Column";
 
@@ -41,15 +37,16 @@ const LIST_COLUMNS_STYLES = {
   },
 };
 
-function ListColumns({
-  columns,
-}) {
+function ListColumns({ columns }) {
   const dispatch = useDispatch();
   const board = useSelector(selectCurrentActiveBoard);
   const [openNewColumnForm, setOpenNewColumnForm] = React.useState(false);
   const [newColumnTitle, setNewColumnTitle] = React.useState("");
 
-  const toggleOpenNewColumnForm = React.useCallback(() => setOpenNewColumnForm(!openNewColumnForm), [openNewColumnForm]);
+  const toggleOpenNewColumnForm = React.useCallback(
+    () => setOpenNewColumnForm(!openNewColumnForm),
+    [openNewColumnForm]
+  );
 
   const addNewColumn = React.useCallback(async () => {
     if (!newColumnTitle) {
@@ -84,18 +81,13 @@ function ListColumns({
     setNewColumnTitle("");
   }, [board, newColumnTitle, toggleOpenNewColumnForm, dispatch]); // Dependencies
 
-
   const renderColumn = React.useMemo(() => {
-    if (!columns) return null
+    if (!columns) return null;
 
-    return columns && columns?.map((item) => (
-      <Column
-        key={item._id}
-        column={item}
-      />
-    ));
+    return (
+      columns && columns?.map((item) => <Column key={item._id} column={item} />)
+    );
   }, [columns]);
-
 
   const renderFormColum = React.useMemo(() => {
     return (
@@ -154,6 +146,7 @@ function ListColumns({
           }}
         >
           <Button
+            className="interceptor-loading"
             onClick={addNewColumn}
             variant="contained"
             color="success"
@@ -216,7 +209,7 @@ function ListColumns({
     () => (!openNewColumnForm ? renderAddNewColumn : renderFormColum),
     [openNewColumnForm, renderAddNewColumn, renderFormColum]
   );
-  47
+  47;
   return (
     <SortableContext
       items={columns ? columns.map((c) => c._id) : []}

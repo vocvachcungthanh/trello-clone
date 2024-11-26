@@ -37,7 +37,7 @@ ReactDOM.createRoot(document.getElementById("root")).render(
         >
           <CssBaseline />
           <App />
-          <ToastContainer />
+          <ToastContainer theme="colored" position="bottom-left" />
         </ConfirmProvider>
       </CssVarsProvider>
     </Provider>
