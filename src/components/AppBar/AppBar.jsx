@@ -23,6 +23,7 @@ import SearchIcon from "@mui/icons-material/Search";
 import InputAdornment from "@mui/material/InputAdornment";
 import Profiles from "./Menus/Profiles";
 import CloseIcon from "@mui/icons-material/Close";
+import { Link } from "react-router-dom";
 
 function AppBar() {
   const [searchValue, setSearchValue] = React.useState("");
@@ -66,31 +67,32 @@ function AppBar() {
         }}
       >
         <AppsIcon sx={{ color: "white" }} />
-
-        <Box
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            gap: 0.5,
-          }}
-        >
-          <SvgIcon
-            component={TrelloIcon}
-            viewBox="0 0 24 24"
-            fontSize="small"
-            sx={{ color: "white" }}
-          />
-          <Typography
-            variant="span"
+        <Link to="/">
+          <Box
             sx={{
-              color: "white",
-              fontSize: "1.2rem",
-              fontWeight: "bold",
+              display: "flex",
+              alignItems: "center",
+              gap: 0.5,
             }}
           >
-            Trello
-          </Typography>
-        </Box>
+            <SvgIcon
+              component={TrelloIcon}
+              viewBox="0 0 24 24"
+              fontSize="small"
+              sx={{ color: "white" }}
+            />
+            <Typography
+              variant="span"
+              sx={{
+                color: "white",
+                fontSize: "1.2rem",
+                fontWeight: "bold",
+              }}
+            >
+              Trello
+            </Typography>
+          </Box>
+        </Link>
 
         <Box
           sx={{
